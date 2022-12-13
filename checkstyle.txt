@@ -1,0 +1,4 @@
+Starting audit...
+[ERROR] /home/student/Desktop/OOP_TV/./src/Main.java:27:51: '4' is a magic number. [MagicNumber]
+Audit done.
+Checkstyle ends with 1 errors.
