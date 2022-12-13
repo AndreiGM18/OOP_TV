@@ -2,7 +2,7 @@ package fileio;
 
 import java.util.ArrayList;
 
-public final class MoviesInput {
+public final class MovieInput {
     private String name;
     private int year;
     private int duration;
@@ -10,7 +10,7 @@ public final class MoviesInput {
     private ArrayList<String> actors;
     private ArrayList<String> countriesBanned;
 
-    public MoviesInput() {
+    public MovieInput() {
     }
 
     public String getName() {

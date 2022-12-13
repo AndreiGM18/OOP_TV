@@ -17,5 +17,6 @@ public class Constants {
     }
 
     public static class Integers {
+        public static final int STARTING_TOKENS = 15;
     }
 }

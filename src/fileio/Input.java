@@ -3,17 +3,17 @@ package fileio;
 import java.util.ArrayList;
 
 public final class Input {
-    private ArrayList<UsersInput> users;
-    private ArrayList<MoviesInput> movies;
+    private ArrayList<UserInput> users;
+    private ArrayList<MovieInput> movies;
     private ArrayList<ActionsInput> actions;
     public Input() {
     }
 
-    public ArrayList<UsersInput> getUsers() {
+    public ArrayList<UserInput> getUsers() {
         return users;
     }
 
-    public ArrayList<MoviesInput> getMovies() {
+    public ArrayList<MovieInput> getMovies() {
         return movies;
     }
 

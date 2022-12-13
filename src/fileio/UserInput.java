@@ -1,8 +1,8 @@
 package fileio;
 
-public final class UsersInput {
+public final class UserInput {
     private CredentialsInput credentials;
-    public UsersInput() {
+    public UserInput() {
     }
 
     public CredentialsInput getCredentials() {

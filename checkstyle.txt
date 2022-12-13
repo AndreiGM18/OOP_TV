@@ -1,4 +1,17 @@
 Starting audit...
 [ERROR] /home/student/Desktop/OOP_TV/./src/Main.java:27:51: '4' is a magic number. [MagicNumber]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/Logout.java:6:5: Class 'Logout' looks like designed for extension (can be subclassed), but the method 'accept' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'Logout' final or making the method 'accept' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/Logout.java:7:24: Parameter verifier should be final. [FinalParameters]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/UnauthenticatedPage.java:6:5: Class 'UnauthenticatedPage' looks like designed for extension (can be subclassed), but the method 'accept' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'UnauthenticatedPage' final or making the method 'accept' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/UnauthenticatedPage.java:7:24: Parameter verifier should be final. [FinalParameters]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/Login.java:7:24: Parameter verifier should be final. [FinalParameters]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/Page.java:6:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/Register.java:7:24: Parameter verifier should be final. [FinalParameters]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/AuthenticatedPage.java:6:5: Class 'AuthenticatedPage' looks like designed for extension (can be subclassed), but the method 'accept' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'AuthenticatedPage' final or making the method 'accept' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] /home/student/Desktop/OOP_TV/./src/page/AuthenticatedPage.java:7:24: Parameter verifier should be final. [FinalParameters]
+[ERROR] /home/student/Desktop/OOP_TV/./src/databases/Database.java:3:8: Unused import - fileio.CredentialsInput. [UnusedImports]
+[ERROR] /home/student/Desktop/OOP_TV/./src/databases/Database.java:10:27: Variable 'userDatabase' must be private and have accessor methods. [VisibilityModifier]
+[ERROR] /home/student/Desktop/OOP_TV/./src/databases/Database.java:11:28: Variable 'movieDatabase' must be private and have accessor methods. [VisibilityModifier]
+[ERROR] /home/student/Desktop/OOP_TV/./src/verifier/Verificator.java:6:5: Missing a Javadoc comment. [MissingJavadocMethod]
 Audit done.
-Checkstyle ends with 1 errors.
+Checkstyle ends with 14 errors.
