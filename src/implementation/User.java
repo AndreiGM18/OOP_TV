@@ -1,12 +1,11 @@
 package implementation;
 
-import constants.Constants;
 import fileio.CredentialsInput;
 
 import java.util.ArrayList;
 
 public final class User {
-    private CredentialsInput credentials;
+    private Credentials credentials;
     private int tokensCount;
     private int numFreePremiumMovies;
     private ArrayList<Movie> purchasedMovies;
@@ -24,11 +23,11 @@ public final class User {
         this.ratedMovies = builder.ratedMovies;
     }
 
-    public CredentialsInput getCredentials() {
+    public Credentials getCredentials() {
         return credentials;
     }
 
-    public void setCredentials(final CredentialsInput credentials) {
+    public void setCredentials(final Credentials credentials) {
         this.credentials = credentials;
     }
 
@@ -80,51 +79,97 @@ public final class User {
         this.ratedMovies = ratedMovies;
     }
 
-    static final class UserBuilder {
-        private CredentialsInput credentials;
+    public static final class UserBuilder {
+        private Credentials credentials;
         private int tokensCount = 0;
-        private int numFreePremiumMovies = Constants.Integers.STARTING_TOKENS;
+        private int numFreePremiumMovies = 15;
         private ArrayList<Movie> purchasedMovies = new ArrayList<>();
         private ArrayList<Movie> watchedMovies = new ArrayList<>();
         private ArrayList<Movie> likedMovies = new ArrayList<>();
         private ArrayList<Movie> ratedMovies = new ArrayList<>();
 
-        UserBuilder(final CredentialsInput credentialsGiven) {
-            this.credentials = credentialsGiven;
+        public UserBuilder(final CredentialsInput credentialsGiven) {
+            this.credentials = new Credentials(credentialsGiven);
         }
 
+        /**
+         *
+         * @param tokensCountGiven
+         * @return
+         */
         public UserBuilder tokensCount(final int tokensCountGiven) {
             this.tokensCount = tokensCountGiven;
             return this;
         }
 
+        /**
+         *
+         * @param numFreePremiumMoviesGiven
+         * @return
+         */
         public UserBuilder numFreePremiumMovies(final int numFreePremiumMoviesGiven) {
             this.numFreePremiumMovies = numFreePremiumMoviesGiven;
             return this;
         }
 
+        /**
+         *
+         * @param purchasedMoviesGiven
+         * @return
+         */
         public UserBuilder purchasedMovies(final ArrayList<Movie> purchasedMoviesGiven) {
             this.purchasedMovies = purchasedMoviesGiven;
             return this;
         }
 
+        /**
+         *
+         * @param watchedMoviesGiven
+         * @return
+         */
         public UserBuilder watchedMovies(final ArrayList<Movie> watchedMoviesGiven) {
             this.watchedMovies = watchedMoviesGiven;
             return this;
         }
 
+        /**
+         *
+         * @param likedMoviesGiven
+         * @return
+         */
         public UserBuilder likedMovies(final ArrayList<Movie> likedMoviesGiven) {
             this.likedMovies = likedMoviesGiven;
             return this;
         }
 
+        /**
+         *
+         * @param ratedMoviesGiven
+         * @return
+         */
         public UserBuilder ratedMovies(final ArrayList<Movie> ratedMoviesGiven) {
             this.ratedMovies = ratedMoviesGiven;
             return this;
         }
 
+        /**
+         *
+         * @return
+         */
         public User build() {
             return new User(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "credentials=" + credentials
+                + ", tokensCount=" + tokensCount
+                + ", numFreePremiumMovies=" + numFreePremiumMovies
+                + ", purchasedMovies=" + purchasedMovies
+                + ", watchedMovies=" + watchedMovies
+                + ", likedMovies=" + likedMovies
+                + ", ratedMovies=" + ratedMovies
+                + '}';
     }
 }

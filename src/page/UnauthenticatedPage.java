@@ -1,10 +1,20 @@
 package page;
 
+import constants.Constants;
 import verifier.Verifier;
 
-public class UnauthenticatedPage extends Page {
+import java.util.ArrayList;
+
+public final class UnauthenticatedPage extends Page implements Accepter {
+    public UnauthenticatedPage() {
+        this.pageFeatures = new ArrayList<>();
+        this.pageConnections = new ArrayList<>();
+        this.pageConnections.add(Constants.Page.LOGIN);
+        this.pageConnections.add(Constants.Page.REGISTER);
+    }
+
     @Override
-    public void accept(Verifier verifier) {
-        verifier.verify(this);
+    public boolean accept(final Verifier verifier, final String string) {
+        return verifier.verify(this, string);
     }
 }

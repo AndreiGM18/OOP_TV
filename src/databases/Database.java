@@ -1,20 +1,117 @@
 package databases;
 
+import constants.Constants;
 import fileio.CredentialsInput;
+import fileio.MovieInput;
+import fileio.UserInput;
 import implementation.Movie;
 import implementation.User;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public final class Database {
-    HashMap<String, User> userDatabase;
-    HashMap<String, Movie> movieDatabase;
+    private static Database instance = null;
 
-    public HashMap<String, User> getUserDatabase() {
-        return userDatabase;
+    private Database() {
     }
 
-    public HashMap<String, Movie> getMovieDatabase() {
+    /**
+     *
+     * @return
+     */
+    public static Database getDatabase() {
+        if (instance == null) {
+            instance = new Database();
+        }
+
+        return instance;
+    }
+
+    private LinkedList<User> userDatabase = new LinkedList<>();
+    private LinkedList<Movie> movieDatabase = new LinkedList<>();
+
+    /**
+     *
+     * @param user
+     */
+    public void putUser(final User user) {
+        userDatabase.addLast(user);
+    }
+
+    /**
+     *
+     * @param movie
+     */
+    public void putMovie(final Movie movie) {
+        movieDatabase.addLast(movie);
+    }
+
+    /**
+     *
+     * @param credentialsInput
+     * @return
+     */
+    public User getUser(final CredentialsInput credentialsInput) {
+        for (User user : userDatabase) {
+            if (user.getCredentials().getName().equals(credentialsInput.getName())
+                    && user.getCredentials().getPassword().equals(credentialsInput.getPassword())) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public Movie getMovie(final String name) {
+        for (Movie movie : movieDatabase) {
+            if (movie.getName().equals(name)) {
+                return movie;
+            }
+        }
+        return null;
+    }
+
+    public LinkedList<Movie> getMovieDatabase() {
         return movieDatabase;
+    }
+
+    /**
+     *
+     */
+    public void clearDatabase() {
+        userDatabase.clear();
+        movieDatabase.clear();
+    }
+
+    public User addUser(CredentialsInput credentialsInput) {
+        User user = new User.UserBuilder(credentialsInput)
+                .build();
+        this.putUser(user);
+
+        return user;
+    }
+    /**
+     *
+     * @param userInputs
+     * @param movieInputs
+     */
+    public void createDatabase(final ArrayList<UserInput> userInputs,
+                               final ArrayList<MovieInput> movieInputs) {
+        for (UserInput userInput : userInputs) {
+            User user = new User.UserBuilder(userInput.getCredentials())
+                    .build();
+            this.putUser(user);
+        }
+
+        for (MovieInput movieInput : movieInputs) {
+            Movie movie = new Movie.MovieBuilder(movieInput)
+                    .build();
+            this.putMovie(movie);
+        }
     }
 }

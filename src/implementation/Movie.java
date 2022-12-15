@@ -71,7 +71,7 @@ public final class Movie {
         this.sumRatings = builder.sumRatings;
     }
 
-    static class MovieBuilder {
+    public static final class MovieBuilder {
         private String name;
         private int year;
         private int duration;
@@ -83,7 +83,7 @@ public final class Movie {
         private int numRatings = 0;
         private int sumRatings = 0;
 
-        MovieBuilder(final MovieInput movie) {
+        public MovieBuilder(final MovieInput movie) {
             this.name = movie.getName();
             this.year = movie.getYear();
             this.duration = movie.getDuration();
@@ -92,28 +92,65 @@ public final class Movie {
             this.countriesBanned = movie.getCountriesBanned();
         }
 
+        /**
+         *
+         * @param numLikesGiven
+         * @return
+         */
         public MovieBuilder numLikes(final int numLikesGiven) {
             this.numLikes = numLikesGiven;
             return this;
         }
 
+        /**
+         *
+         * @param ratingGiven
+         * @return
+         */
         public MovieBuilder rating(final double ratingGiven) {
             this.rating = ratingGiven;
             return this;
         }
 
+        /**
+         *
+         * @param numRatingsGiven
+         * @return
+         */
         public MovieBuilder numRatings(final int numRatingsGiven) {
             this.numRatings = numRatingsGiven;
             return this;
         }
 
+        /**
+         *
+         * @param sumRatingsGiven
+         * @return
+         */
         public MovieBuilder sumRatings(final int sumRatingsGiven) {
             this.sumRatings = sumRatingsGiven;
             return this;
         }
 
+        /**
+         *
+         * @return
+         */
         public Movie build() {
             return new Movie(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Movie{" + "name='" + name + '\''
+                + ", year=" + year
+                + ", duration=" + duration
+                + ", genres=" + genres
+                + ", actors=" + actors
+                + ", countriesBanned=" + countriesBanned
+                + ", numLikes=" + numLikes
+                + ", rating=" + rating
+                + ", numRatings=" + numRatings;
     }
 }

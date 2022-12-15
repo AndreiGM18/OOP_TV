@@ -1,10 +1,19 @@
 package page;
 
+import constants.Constants;
 import verifier.Verifier;
 
-public final class Logout extends Page {
+import java.util.ArrayList;
+
+public final class Logout extends Page implements Accepter {
+    public Logout() {
+        this.pageFeatures = new ArrayList<>();
+        this.pageConnections = new ArrayList<>();
+        this.pageFeatures.add(Constants.Feature.LOGOUT);
+    }
+
     @Override
-    public void accept(Verifier verifier) {
-        verifier.verify(this);
+    public boolean accept(final Verifier verifier, final String string) {
+        return verifier.verify(this, string);
     }
 }
