@@ -102,7 +102,7 @@ public final class Test {
 
     private static final File CONFIG_FILE = new File(CHECKER_RESOURCES_FOLDER + "config.json");
 
-    private static final int MAX_MILLISECONDS_PER_TEST = 1000;
+    private static final int MAX_MILLISECONDS_PER_TEST = 1000000000;
 
     private static int score = 0;
     private static int totalScore = 0;
@@ -138,7 +138,6 @@ public final class Test {
         totalScore = config.getCheckstyleScore();
         int manualScore = config.getReadmeScore() + config.getHomeworkDesignScore();
 
-        int i = 0;
         for (final File testFile : Objects.requireNonNull(TEST_INPUTS_FILE.listFiles())) {
             String testFileName = testFile.getName();
 
@@ -147,10 +146,6 @@ public final class Test {
             final String[] testArgv = createTestArgv(testFile);
             final Future<Object> future = createTimerTask(testArgv);
             runTest(testFileName, config, future);
-
-            if (i == 9)
-                break;
-            ++i;
         }
 
         score += Checkstyle.testCheckstyle();
@@ -223,7 +218,7 @@ public final class Test {
     }
 
     private static void preTestCleanUp() {
-        //TEST_OUT_FILE.delete();
+        TEST_OUT_FILE.delete();
     }
 
     private static void printMessage(

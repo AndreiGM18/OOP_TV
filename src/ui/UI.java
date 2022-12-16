@@ -1,21 +1,29 @@
 package ui;
 
-import databases.Database;
+import fileio.ContainsInput;
 import fileio.FilterInput;
-import fileio.SortInput;
 import implementation.Movie;
 import implementation.User;
-import page.*;
+import page.AuthenticatedPage;
+import page.Login;
+import page.Logout;
+import page.Movies;
+import page.Page;
+import page.Register;
+import page.SeeDetails;
+import page.UnauthenticatedPage;
+import page.Upgrades;
+import ui.sortstrategy.SortStrategy;
+import ui.sortstrategy.SortStrategyFactory;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public final class UI {
     private static UI instance = null;
 
     private UI() {
+        this.init();
     }
 
     /**
@@ -29,14 +37,18 @@ public final class UI {
 
         return instance;
     }
+
     private Page currentPage;
     private User currentUser;
     private ArrayList<Movie> currentMoviesList = new ArrayList<>();
 
     private HashMap<String, Page> pages = new HashMap<>();
 
+    /**
+     *
+     */
     public void init() {
-        AuthenticatedPage authenticatedPage =  new AuthenticatedPage();
+        AuthenticatedPage authenticatedPage = new AuthenticatedPage();
         Login login = new Login();
         Logout logout = new Logout();
         Movies moviesPage = new Movies();
@@ -56,9 +68,14 @@ public final class UI {
         this.currentPage = unauthenticatedPage;
     }
 
+    /**
+     *
+     */
     public void clearUI() {
         this.currentUser = null;
         this.currentMoviesList.clear();
+        this.pages.clear();
+        this.init();
     }
 
     public Page getCurrentPage() {
@@ -85,28 +102,111 @@ public final class UI {
         return currentMoviesList;
     }
 
-    public void setCurrentMoviesList(final LinkedList<Movie> movies) {
-        System.out.println(movies);
-        System.out.println(currentUser);
+    /**
+     *
+     * @param movies
+     */
+    public void setCurrentMoviesList(final ArrayList<Movie> movies) {
+        currentMoviesList.clear();
         for (Movie movie : movies) {
-            if (movie.getCountriesBanned().contains(currentUser.getCredentials().getCountry()) == false)
-                this.currentMoviesList.add(movie);
-        }
-    }
-
-    public void search(String substring) {
-        this.currentMoviesList.clear();
-        for (Movie movie : currentMoviesList) {
-            if (movie.getName().contains(substring)) {
+            if (!movie.getCountriesBanned().contains(currentUser.getCredentials().getCountry())) {
                 this.currentMoviesList.add(movie);
             }
         }
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public Movie getMovie(final String name) {
+        for (Movie movie : currentMoviesList) {
+            if (movie.getName().equals(name)) {
+                return movie;
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param substring
+     */
+    public void search(final String substring) {
+        ArrayList<Movie> newCurrentMoviesList = new ArrayList<>();
+        for (Movie movie : currentMoviesList) {
+            if (movie.getName().startsWith(substring)) {
+               newCurrentMoviesList.add(movie);
+            }
+        }
+        currentMoviesList = newCurrentMoviesList;
+    }
+
+    /**
+     *
+     * @param containsInput
+     */
+    public void contains(final ContainsInput containsInput) {
+        if (containsInput == null) {
+            return;
+        }
+
+        ArrayList<Movie> newCurrentMoviesList = new ArrayList<>();
+        for (Movie movie : currentMoviesList) {
+            boolean checkActors = true, checkGenre = true;
+            if (containsInput.getActors() != null) {
+                for (String actor : containsInput.getActors()) {
+                    if (!movie.getActors().contains(actor)) {
+                        checkActors = false;
+                        break;
+                    }
+                }
+            }
+
+            if (containsInput.getGenre() != null) {
+                for (String genre : containsInput.getGenre()) {
+                    if (!movie.getGenres().contains(genre)) {
+                        checkGenre = false;
+                        break;
+                    }
+                }
+            }
+
+            if (checkActors && checkGenre) {
+                newCurrentMoviesList.add(movie);
+            }
+        }
+
+        currentMoviesList = newCurrentMoviesList;
+    }
+
+    /**
+     *
+     * @param filter
+     */
     public void filter(final FilterInput filter) {
-        SortStrategy strategy = SortStrategyFactory.createStrat(filter.getSort());
-        System.out.println(strategy);
-        strategy.sort(this.currentMoviesList);
-        System.out.println(this.currentMoviesList);
+        if (filter.getSort() != null) {
+            SortStrategy strategy = SortStrategyFactory.createStrat(filter.getSort());
+            if (strategy != null) {
+                strategy.sort(this.currentMoviesList);
+            }
+        }
+
+        this.contains(filter.getContains());
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public boolean check(final String name) {
+        for (Movie movie : currentMoviesList) {
+            if (movie.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

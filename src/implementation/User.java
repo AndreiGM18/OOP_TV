@@ -1,5 +1,7 @@
 package implementation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.CredentialsInput;
 
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ public final class User {
         this.numFreePremiumMovies = builder.numFreePremiumMovies;
         this.purchasedMovies = builder.purchasedMovies;
         this.watchedMovies = builder.watchedMovies;
-        this.likedMovies = builder.watchedMovies;
+        this.likedMovies = builder.likedMovies;
         this.ratedMovies = builder.ratedMovies;
     }
 
@@ -161,15 +163,89 @@ public final class User {
         }
     }
 
-    @Override
-    public String toString() {
-        return "User{" + "credentials=" + credentials
-                + ", tokensCount=" + tokensCount
-                + ", numFreePremiumMovies=" + numFreePremiumMovies
-                + ", purchasedMovies=" + purchasedMovies
-                + ", watchedMovies=" + watchedMovies
-                + ", likedMovies=" + likedMovies
-                + ", ratedMovies=" + ratedMovies
-                + '}';
+    /**
+     *
+     * @param count
+     * @return
+     */
+    public boolean buyTokens(final String count) {
+        int cnt = Integer.parseInt(count);
+        int bal = Integer.parseInt(credentials.getBalance());
+
+        if (bal >= cnt) {
+            bal -= cnt;
+            tokensCount += cnt;
+            String newBal = String.valueOf(bal);
+            credentials.setBalance(newBal);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean buyPremium() {
+        if (tokensCount >= 10 && credentials.getAccountType().equals("standard")) {
+            tokensCount -= 10;
+            credentials.setAccountType("premium");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ObjectNode createObjectNode() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode objectNode = objectMapper.createObjectNode();
+
+        ObjectNode credentialsNode = objectMapper.createObjectNode();
+        credentialsNode.put("name", credentials.getName());
+        credentialsNode.put("password", credentials.getPassword());
+        credentialsNode.put("accountType", credentials.getAccountType());
+        credentialsNode.put("country", credentials.getCountry());
+        credentialsNode.put("balance", credentials.getBalance());
+        objectNode.set("credentials", credentialsNode);
+        objectNode.put("tokensCount", tokensCount);
+        objectNode.put("numFreePremiumMovies", numFreePremiumMovies);
+        objectNode.put("purchasedMovies", Movie.createMoviesArrayNode(purchasedMovies));
+        objectNode.put("watchedMovies", Movie.createMoviesArrayNode(watchedMovies));
+        objectNode.put("likedMovies", Movie.createMoviesArrayNode(likedMovies));
+        objectNode.put("ratedMovies", Movie.createMoviesArrayNode(ratedMovies));
+
+        return objectNode;
+    }
+
+    /**
+     *
+     * @param movie
+     * @return
+     */
+    public boolean purchase(final Movie movie) {
+        if (credentials.getAccountType().equals("standard") && tokensCount >= 2) {
+            tokensCount -= 2;
+            purchasedMovies.add(movie);
+            return true;
+        }
+
+        if (credentials.getAccountType().equals("premium")) {
+            if (numFreePremiumMovies >= 1) {
+                numFreePremiumMovies -= 1;
+                purchasedMovies.add(movie);
+                return true;
+            } else if (tokensCount >= 2) {
+                tokensCount -= 2;
+                purchasedMovies.add(movie);
+                return true;
+            }
+        }
+
+        return false;
     }
 }

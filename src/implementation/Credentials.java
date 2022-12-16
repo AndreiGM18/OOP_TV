@@ -2,14 +2,14 @@ package implementation;
 
 import fileio.CredentialsInput;
 
-public class Credentials {
+public final class Credentials {
     private String name;
     private String password;
     private String accountType;
     private String country;
     private String balance;
 
-    public Credentials(CredentialsInput credentialsInput) {
+    public Credentials(final CredentialsInput credentialsInput) {
         this.name = credentialsInput.getName();
         this.password = credentialsInput.getPassword();
         this.accountType = credentialsInput.getAccountType();
@@ -29,6 +29,10 @@ public class Credentials {
         return accountType;
     }
 
+    public void setAccountType(final String accountType) {
+        this.accountType = accountType;
+    }
+
     public String getCountry() {
         return country;
     }
@@ -37,14 +41,7 @@ public class Credentials {
         return balance;
     }
 
-    @Override
-    public String toString() {
-        return "Credentials{" +
-                "name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", accountType='" + accountType + '\'' +
-                ", country='" + country + '\'' +
-                ", balance='" + balance + '\'' +
-                '}';
+    public void setBalance(final String balance) {
+        this.balance = balance;
     }
 }

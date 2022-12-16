@@ -1,6 +1,8 @@
 package implementation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.MovieInput;
 
 import java.util.ArrayList;
@@ -15,7 +17,6 @@ public final class Movie {
     private int numLikes;
     private double rating;
     private int numRatings;
-    @JsonIgnore
     private int sumRatings;
 
     public String getName() {
@@ -93,7 +94,6 @@ public final class Movie {
         }
 
         /**
-         *
          * @param numLikesGiven
          * @return
          */
@@ -103,7 +103,6 @@ public final class Movie {
         }
 
         /**
-         *
          * @param ratingGiven
          * @return
          */
@@ -113,7 +112,6 @@ public final class Movie {
         }
 
         /**
-         *
          * @param numRatingsGiven
          * @return
          */
@@ -123,7 +121,6 @@ public final class Movie {
         }
 
         /**
-         *
          * @param sumRatingsGiven
          * @return
          */
@@ -133,7 +130,6 @@ public final class Movie {
         }
 
         /**
-         *
          * @return
          */
         public Movie build() {
@@ -141,16 +137,58 @@ public final class Movie {
         }
     }
 
-    @Override
-    public String toString() {
-        return "Movie{" + "name='" + name + '\''
-                + ", year=" + year
-                + ", duration=" + duration
-                + ", genres=" + genres
-                + ", actors=" + actors
-                + ", countriesBanned=" + countriesBanned
-                + ", numLikes=" + numLikes
-                + ", rating=" + rating
-                + ", numRatings=" + numRatings;
+    public void setNumLikes(final int numLikes) {
+        this.numLikes = numLikes;
+    }
+
+    public void setRating(final double rating) {
+        this.rating = rating;
+    }
+
+    public void setNumRatings(final int numRatings) {
+        this.numRatings = numRatings;
+    }
+
+    public void setSumRatings(final int sumRatings) {
+        this.sumRatings = sumRatings;
+    }
+
+    /**
+     *
+     * @param movies
+     * @return
+     */
+    public static ArrayNode createMoviesArrayNode(final ArrayList<Movie> movies) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode arrayNode = objectMapper.createArrayNode();
+
+        for (Movie movie : movies) {
+            if (movie != null) {
+                arrayNode.add(movie.createObjectNode());
+            }
+        }
+
+        return arrayNode;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ObjectNode createObjectNode() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode objectNode = objectMapper.createObjectNode();
+
+        objectNode.put("name", name);
+        objectNode.put("year", year);
+        objectNode.put("duration", duration);
+        objectNode.putPOJO("genres", genres);
+        objectNode.putPOJO("actors", actors);
+        objectNode.putPOJO("countriesBanned", countriesBanned);
+        objectNode.put("numLikes", numLikes);
+        objectNode.put("rating", rating);
+        objectNode.put("numRatings", numRatings);
+
+        return objectNode;
     }
 }

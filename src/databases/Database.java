@@ -1,6 +1,5 @@
 package databases;
 
-import constants.Constants;
 import fileio.CredentialsInput;
 import fileio.MovieInput;
 import fileio.UserInput;
@@ -64,17 +63,9 @@ public final class Database {
 
     /**
      *
-     * @param name
+     * @param
      * @return
      */
-    public Movie getMovie(final String name) {
-        for (Movie movie : movieDatabase) {
-            if (movie.getName().equals(name)) {
-                return movie;
-            }
-        }
-        return null;
-    }
 
     public LinkedList<Movie> getMovieDatabase() {
         return movieDatabase;
@@ -88,7 +79,12 @@ public final class Database {
         movieDatabase.clear();
     }
 
-    public User addUser(CredentialsInput credentialsInput) {
+    /**
+     *
+     * @param credentialsInput
+     * @return
+     */
+    public User addUser(final CredentialsInput credentialsInput) {
         User user = new User.UserBuilder(credentialsInput)
                 .build();
         this.putUser(user);

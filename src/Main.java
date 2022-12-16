@@ -20,21 +20,15 @@ public final class Main {
     private Main() {
     }
 
-    private static void createOut(ArrayNode output, UI ui, String error) {
+    private static void createOut(final ArrayNode output, final UI ui, final String error) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode node = objectMapper.createObjectNode();
 
         if (error == null) {
             node.set(Constants.Output.ERR, null);
-            System.out.println(ui.getCurrentMoviesList() + "here");
-
-            ArrayNode arrayNode = objectMapper.createArrayNode();
-            for (Movie movie : ui.getCurrentMoviesList()) {
-                arrayNode.addPOJO(movie);
-            }
-
-            node.set(Constants.Output.CURRMOVIES, arrayNode);
-            node.putPOJO(Constants.Output.CURRUSER, ui.getCurrentUser());
+            node.set(Constants.Output.CURRMOVIES,
+                    Movie.createMoviesArrayNode(ui.getCurrentMoviesList()));
+            node.set(Constants.Output.CURRUSER, ui.getCurrentUser().createObjectNode());
         } else {
             node.put(Constants.Output.ERR, error);
             node.putPOJO(Constants.Output.CURRMOVIES, new ArrayList<>());
@@ -43,6 +37,7 @@ public final class Main {
 
         output.add(node);
     }
+
     /**
      *
      * @param args args[0] is the input file's path and args[1] is the output file's path
@@ -54,7 +49,7 @@ public final class Main {
         File in = new File(args[0]);
         File result = new File(args[1]);
 
-        Input input = null;
+        Input input;
         try {
             input = objectMapper.readValue(in, Input.class);
         } catch (IOException e) {
@@ -66,50 +61,49 @@ public final class Main {
         UI ui = UI.getUI();
         ui.clearUI();
 
-        ui.init();
-
         for (ActionsInput action : input.getActions()) {
-            System.out.println();
-            System.out.println(ui.getCurrentPage());
-            System.out.println(action.getType());
-            System.out.println();
             switch (action.getType()) {
                 case Constants.Command.CHANGE -> {
-                    if (ui.getCurrentPage().accept(new VerifierChangePage(), action.getPage()) == false) {
-                        System.out.println("wrong page");
+                    if (!ui.getCurrentPage().accept(new VerifierChangePage(), action.getPage())) {
                         Main.createOut(output, ui, Constants.Output.ERROR);
                     } else {
-                        System.out.println("correct page");
                         ui.setCurrentPage(ui.getPages().get(action.getPage()));
 
                         if (action.getPage().equals(Constants.Page.LOGOUT)) {
-                            System.out.println("user logout");
                             ui.clearUI();
                             ui.setCurrentPage(ui.getPages().get(Constants.Page.UNAUTH));
                         }
 
                         if (action.getPage().equals(Constants.Page.MOVIES)) {
-                            System.out.println("movies are here   " + database.getMovieDatabase());
-                            ui.setCurrentMoviesList(database.getMovieDatabase());
+                            ui.setCurrentMoviesList(new ArrayList<>(database.getMovieDatabase()));
                             Main.createOut(output, ui, null);
+                        }
+
+                        if (action.getPage().equals((Constants.Page.DETAILS))) {
+                            if (ui.check(action.getMovie())) {
+                                ArrayList<Movie> currentMovie = new ArrayList<>();
+                                currentMovie.add(ui.getMovie(action.getMovie()));
+                                ui.setCurrentMoviesList(new ArrayList<>(currentMovie));
+                                Main.createOut(output, ui, null);
+                            } else {
+                                Main.createOut(output, ui, Constants.Output.ERROR);
+                                ui.setCurrentPage(ui.getPages().get(Constants.Page.MOVIES));
+                            }
                         }
                     }
                 }
 
                 case Constants.Command.ON -> {
-                    if (ui.getCurrentPage().accept(new VerifierOnPage(), action.getFeature()) == false) {
-                        System.out.println("wrong feature");
+                    if (!ui.getCurrentPage().accept(new VerifierOnPage(), action.getFeature())) {
                         Main.createOut(output, ui, Constants.Output.ERROR);
                     } else {
                         switch (action.getFeature()) {
                             case Constants.Feature.LOGIN -> {
                                 User user = database.getUser(action.getCredentials());
                                 if (user == null) {
-                                    System.out.println("user login not found");
                                     Main.createOut(output, ui, Constants.Output.ERROR);
                                     ui.setCurrentPage(ui.getPages().get(Constants.Page.UNAUTH));
                                 } else {
-                                    System.out.println("user login found");
                                     ui.setCurrentUser(user);
                                     ui.setCurrentPage(ui.getPages().get(Constants.Page.AUTH));
                                     Main.createOut(output, ui, null);
@@ -119,37 +113,106 @@ public final class Main {
                             case Constants.Feature.REGISTER -> {
                                 User user = database.getUser(action.getCredentials());
                                 if (user != null) {
-                                    System.out.println("user register exists");
                                     Main.createOut(output, ui, Constants.Output.ERROR);
                                     ui.setCurrentPage(ui.getPages().get(Constants.Page.UNAUTH));
                                 } else {
-                                    System.out.println("user register success");
                                     User newUser = database.addUser(action.getCredentials());
                                     ui.setCurrentUser(newUser);
                                     ui.setCurrentPage(ui.getPages().get(Constants.Page.AUTH));
-                                    System.out.println(newUser);
                                     Main.createOut(output, ui, null);
                                 }
                             }
 
                             case Constants.Feature.SEARCH -> {
+                                ui.setCurrentMoviesList(new ArrayList<>(database
+                                        .getMovieDatabase()));
                                 ui.search(action.getStartsWith());
                                 Main.createOut(output, ui, null);
                             }
 
                             case Constants.Feature.FILTER -> {
+                                ui.setCurrentMoviesList(new ArrayList<>(database
+                                        .getMovieDatabase()));
                                 ui.filter(action.getFilters());
                                 Main.createOut(output, ui, null);
+                            }
+
+                            case Constants.Feature.TOKENS -> {
+                                if (!ui.getCurrentUser().buyTokens(action.getCount())) {
+                                    Main.createOut(output, ui, Constants.Output.ERROR);
+                                }
+                            }
+
+                            case Constants.Feature.PREMIUM -> {
+                                if (!ui.getCurrentUser().buyPremium()) {
+                                    Main.createOut(output, ui, Constants.Output.ERROR);
+                                }
+                            }
+
+                            case Constants.Feature.PURCHASE -> {
+                                Movie movie = ui.getCurrentMoviesList().get(0);
+                                if (ui.getCurrentUser().purchase(movie)) {
+                                    Main.createOut(output, ui, null);
+                                } else {
+                                    Main.createOut(output, ui, Constants.Output.ERROR);
+                                }
+                            }
+
+                            case Constants.Feature.WATCH -> {
+                                    Movie movie = ui.getCurrentMoviesList().get(0);
+                                    if (movie != null && ui.getCurrentUser().getPurchasedMovies()
+                                            .contains(movie)) {
+                                        ui.getCurrentUser().getWatchedMovies().add(movie);
+                                        Main.createOut(output, ui, null);
+                                    } else {
+                                        Main.createOut(output, ui, Constants.Output.ERROR);
+                                    }
+                            }
+
+                            case Constants.Feature.LIKE -> {
+                                    Movie movie = ui.getCurrentMoviesList().get(0);
+                                    if (movie != null && ui.getCurrentUser().getWatchedMovies()
+                                            .contains(movie)) {
+                                        ui.getCurrentUser().getLikedMovies().add(movie);
+                                        movie.setNumLikes(movie.getNumLikes() + 1);
+                                        Main.createOut(output, ui, null);
+                                    } else {
+                                        Main.createOut(output, ui, Constants.Output.ERROR);
+                                    }
+                            }
+
+                            case Constants.Feature.RATE -> {
+                                    Movie movie = ui.getCurrentMoviesList().get(0);
+                                    if (movie != null && ui.getCurrentUser().getWatchedMovies()
+                                            .contains(movie)) {
+                                        if (action.getRate() > 5) {
+                                            Main.createOut(output, ui, Constants.Output.ERROR);
+                                        } else {
+                                            movie.setNumRatings(movie.getNumRatings() + 1);
+                                            movie.setSumRatings(movie.getSumRatings()
+                                                    + action.getRate());
+                                            movie.setRating((double) movie.getSumRatings()
+                                                    / movie.getNumRatings());
+                                            ui.getCurrentUser().getRatedMovies().add(movie);
+                                            Main.createOut(output, ui, null);
+                                        }
+                                    } else {
+                                        Main.createOut(output, ui, Constants.Output.ERROR);
+                                    }
+                            }
+
+                            default -> {
+                                Main.createOut(output, ui, Constants.Output.ERROR);
                             }
                         }
                     }
                 }
+                default -> {
+                    Main.createOut(output, ui, Constants.Output.ERROR);
+                }
             }
         }
 
-        ui.setCurrentPage(ui.getPages().get(Constants.Page.UNAUTH));
-        ui.clearUI();
-        database.clearDatabase();
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         try {
             objectWriter.writeValue(result, output);
