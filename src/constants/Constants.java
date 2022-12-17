@@ -6,7 +6,7 @@ package constants;
 public class Constants {
     public static final class User {
         public static final String CREDENTIALS = "credentials";
-        public static final class Credentials {
+        public static class Credentials {
             public static final String NAME = "name";
             public static final String PASSWORD = "password";
             public static final String ACC_TYPE = "accountType";
@@ -35,9 +35,13 @@ public class Constants {
         public static final String NUM_RATINGS = "numRatings";
     }
 
-    public static class Command {
+    public static class Action {
         public static final String ON = "on page";
         public static final String CHANGE = "change page";
+        public static class Filter {
+            public static final String INC = "increasing";
+            public static final String DEC = "decreasing";
+        }
     }
 
     public static class Output {

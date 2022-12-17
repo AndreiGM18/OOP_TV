@@ -1,5 +1,6 @@
 package application.sortstrategy;
 
+import constants.Constants;
 import fileio.SortInput;
 
 public final class SortStrategyFactory {
@@ -15,10 +16,10 @@ public final class SortStrategyFactory {
         /* The duration field may be null */
         if (sortInput.getDuration() == null) {
             switch (sortInput.getRating()) {
-                case "increasing" -> {
+                case Constants.Action.Filter.INC -> {
                     return new RatingInc();
                 }
-                case "decreasing" -> {
+                case Constants.Action.Filter.DEC -> {
                     return new RatingDec();
                 }
                 default -> {
@@ -28,12 +29,12 @@ public final class SortStrategyFactory {
         }
 
         switch (sortInput.getDuration()) {
-            case "increasing" -> {
+            case Constants.Action.Filter.INC -> {
                 switch (sortInput.getRating()) {
-                    case "increasing" -> {
+                    case Constants.Action.Filter.INC -> {
                         return new DurationIncRatingInc();
                     }
-                    case "decreasing" -> {
+                    case Constants.Action.Filter.DEC -> {
                         return new DurationIncRatingDec();
                     }
                     default -> {
@@ -42,12 +43,12 @@ public final class SortStrategyFactory {
                 }
             }
 
-            case "decreasing" -> {
+            case Constants.Action.Filter.DEC -> {
                 switch (sortInput.getRating()) {
-                    case "increasing" -> {
+                    case Constants.Action.Filter.INC -> {
                         return new DurationDecRatingInc();
                     }
-                    case "decreasing" -> {
+                    case Constants.Action.Filter.DEC -> {
                         return new DurationDecRatingDec();
                     }
                     default -> {

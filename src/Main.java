@@ -336,11 +336,11 @@ public final class Main {
 
         for (ActionInput action : input.getActions()) {
             switch (action.getType()) {
-                case Constants.Command.CHANGE -> {
+                case Constants.Action.CHANGE -> {
                     changePageHandler(database, app, action, output);
                 }
 
-                case Constants.Command.ON -> {
+                case Constants.Action.ON -> {
                     onPageHandler(database, app, action, output);
                 }
 
