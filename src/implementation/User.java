@@ -246,10 +246,10 @@ public final class User {
         objectNode.set(Constants.User.CREDENTIALS, credentialsNode);
         objectNode.put(Constants.User.TOKENS_CNT, tokensCount);
         objectNode.put(Constants.User.FREE_MOVIES, numFreePremiumMovies);
-        objectNode.put(Constants.User.PURCHASED, Movie.createMoviesArrayNode(purchasedMovies));
-        objectNode.put(Constants.User.WATCHED, Movie.createMoviesArrayNode(watchedMovies));
-        objectNode.put(Constants.User.LIKED, Movie.createMoviesArrayNode(likedMovies));
-        objectNode.put(Constants.User.RATED, Movie.createMoviesArrayNode(ratedMovies));
+        objectNode.set(Constants.User.PURCHASED, Movie.createMoviesArrayNode(purchasedMovies));
+        objectNode.set(Constants.User.WATCHED, Movie.createMoviesArrayNode(watchedMovies));
+        objectNode.set(Constants.User.LIKED, Movie.createMoviesArrayNode(likedMovies));
+        objectNode.set(Constants.User.RATED, Movie.createMoviesArrayNode(ratedMovies));
 
         return objectNode;
     }
