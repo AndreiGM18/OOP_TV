@@ -2,6 +2,9 @@ package implementation;
 
 import fileio.CredentialsInput;
 
+/**
+ * Class differs from CredentialsInput due to the fact that balance is a String, not an int
+ */
 public final class Credentials {
     private String name;
     private String password;
@@ -14,6 +17,8 @@ public final class Credentials {
         this.password = credentialsInput.getPassword();
         this.accountType = credentialsInput.getAccountType();
         this.country = credentialsInput.getCountry();
+
+        /* Converting int to String */
         this.balance = String.valueOf(credentialsInput.getBalance());
     }
 

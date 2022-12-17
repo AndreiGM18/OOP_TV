@@ -1,4 +1,4 @@
-package ui.sortstrategy;
+package application.sortstrategy;
 
 import implementation.Movie;
 
@@ -7,13 +7,13 @@ import java.util.Comparator;
 
 public abstract class SortStrategy {
     /**
-     *
+     * Sorts the list based on what type of strategy it is
      * @param currentMoviesList
      */
     public abstract void sort(ArrayList<Movie> currentMoviesList);
 }
 
-final class AA extends SortStrategy {
+final class DurationIncRatingInc extends SortStrategy {
     @Override
     public void sort(final ArrayList<Movie> currentMoviesList) {
         currentMoviesList.sort(new Comparator<Movie>() {
@@ -37,7 +37,7 @@ final class AA extends SortStrategy {
     }
 }
 
-final class AD extends SortStrategy {
+final class DurationIncRatingDec extends SortStrategy {
     @Override
     public void sort(final ArrayList<Movie> currentMoviesList) {
         currentMoviesList.sort(new Comparator<Movie>() {
@@ -61,7 +61,7 @@ final class AD extends SortStrategy {
     }
 }
 
-final class DA extends SortStrategy {
+final class DurationDecRatingInc extends SortStrategy {
     @Override
     public void sort(final ArrayList<Movie> currentMoviesList) {
         currentMoviesList.sort(new Comparator<Movie>() {
@@ -85,7 +85,7 @@ final class DA extends SortStrategy {
     }
 }
 
-final class DD extends SortStrategy {
+final class DurationDecRatingDec extends SortStrategy {
     @Override
     public void sort(final ArrayList<Movie> currentMoviesList) {
         currentMoviesList.sort(new Comparator<Movie>() {
@@ -109,7 +109,7 @@ final class DD extends SortStrategy {
     }
 }
 
-final class RatingA extends SortStrategy {
+final class RatingInc extends SortStrategy {
     @Override
     public void sort(final ArrayList<Movie> currentMoviesList) {
         currentMoviesList.sort(new Comparator<Movie>() {
@@ -125,7 +125,7 @@ final class RatingA extends SortStrategy {
     }
 }
 
-final class RatingD extends SortStrategy {
+final class RatingDec extends SortStrategy {
     @Override
     public void sort(final ArrayList<Movie> currentMoviesList) {
         currentMoviesList.sort(new Comparator<Movie>() {

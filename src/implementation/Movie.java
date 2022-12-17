@@ -3,10 +3,14 @@ package implementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import constants.Constants;
 import fileio.MovieInput;
 
 import java.util.ArrayList;
 
+/**
+ * Class implements the Builder design pattern
+ */
 public final class Movie {
     private String name;
     private int year;
@@ -94,8 +98,8 @@ public final class Movie {
         }
 
         /**
-         * @param numLikesGiven
-         * @return
+         * @param numLikesGiven the number of likes the movie has
+         * @return the changed Builder instance
          */
         public MovieBuilder numLikes(final int numLikesGiven) {
             this.numLikes = numLikesGiven;
@@ -103,8 +107,8 @@ public final class Movie {
         }
 
         /**
-         * @param ratingGiven
-         * @return
+         * @param ratingGiven the movie's rating
+         * @return the changed Builder instance
          */
         public MovieBuilder rating(final double ratingGiven) {
             this.rating = ratingGiven;
@@ -112,8 +116,8 @@ public final class Movie {
         }
 
         /**
-         * @param numRatingsGiven
-         * @return
+         * @param numRatingsGiven the number of ratings the movie has
+         * @return the changed Builder instance
          */
         public MovieBuilder numRatings(final int numRatingsGiven) {
             this.numRatings = numRatingsGiven;
@@ -121,8 +125,8 @@ public final class Movie {
         }
 
         /**
-         * @param sumRatingsGiven
-         * @return
+         * @param sumRatingsGiven the total rating scores combined
+         * @return the changed Builder instance
          */
         public MovieBuilder sumRatings(final int sumRatingsGiven) {
             this.sumRatings = sumRatingsGiven;
@@ -130,7 +134,7 @@ public final class Movie {
         }
 
         /**
-         * @return
+         * @return a Movie based on everything specified to the Builder
          */
         public Movie build() {
             return new Movie(this);
@@ -154,40 +158,38 @@ public final class Movie {
     }
 
     /**
-     *
-     * @param movies
-     * @return
+     * Static method that returns an ArrayNode based on an ArrayList
+     * @param movies ArrayList
+     * @return ArrayNode
      */
     public static ArrayNode createMoviesArrayNode(final ArrayList<Movie> movies) {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode arrayNode = objectMapper.createArrayNode();
 
         for (Movie movie : movies) {
-            if (movie != null) {
-                arrayNode.add(movie.createObjectNode());
-            }
+            arrayNode.add(movie.createObjectNode());
         }
 
         return arrayNode;
     }
 
     /**
-     *
-     * @return
+     * Creates an ObjectNode based on the movie's fields
+     * @return ObjectNode
      */
     public ObjectNode createObjectNode() {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
 
-        objectNode.put("name", name);
-        objectNode.put("year", year);
-        objectNode.put("duration", duration);
-        objectNode.putPOJO("genres", genres);
-        objectNode.putPOJO("actors", actors);
-        objectNode.putPOJO("countriesBanned", countriesBanned);
-        objectNode.put("numLikes", numLikes);
-        objectNode.put("rating", rating);
-        objectNode.put("numRatings", numRatings);
+        objectNode.put(Constants.Movie.NAME, name);
+        objectNode.put(Constants.Movie.YEAR, year);
+        objectNode.put(Constants.Movie.DURATION, duration);
+        objectNode.putPOJO(Constants.Movie.GENRES, genres);
+        objectNode.putPOJO(Constants.Movie.ACTORS, actors);
+        objectNode.putPOJO(Constants.Movie.COUNTRIES_BANNED, countriesBanned);
+        objectNode.put(Constants.Movie.NUM_LIKES, numLikes);
+        objectNode.put(Constants.Movie.RATING, rating);
+        objectNode.put(Constants.Movie.NUM_RATINGS, numRatings);
 
         return objectNode;
     }

@@ -1,5 +1,6 @@
 package fileio;
-public final class ActionsInput {
+
+public final class ActionInput {
     private String type;
     private String page;
     private String movie;
@@ -10,7 +11,7 @@ public final class ActionsInput {
     private String count;
     private int rate;
 
-    public ActionsInput() {
+    public ActionInput() {
     }
 
     public String getType() {

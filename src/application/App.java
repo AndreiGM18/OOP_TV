@@ -1,5 +1,6 @@
-package ui;
+package application;
 
+import constants.Constants;
 import fileio.ContainsInput;
 import fileio.FilterInput;
 import implementation.Movie;
@@ -13,26 +14,26 @@ import page.Register;
 import page.SeeDetails;
 import page.UnauthenticatedPage;
 import page.Upgrades;
-import ui.sortstrategy.SortStrategy;
-import ui.sortstrategy.SortStrategyFactory;
+import application.sortstrategy.SortStrategy;
+import application.sortstrategy.SortStrategyFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public final class UI {
-    private static UI instance = null;
+public final class App {
+    private static App instance = null;
 
-    private UI() {
+    private App() {
         this.init();
     }
 
     /**
-     *
-     * @return
+     * Singleton pattern
+     * @return instance
      */
-    public static UI getUI() {
+    public static App getUI() {
         if (instance == null) {
-            instance = new UI();
+            instance = new App();
         }
 
         return instance;
@@ -45,7 +46,8 @@ public final class UI {
     private HashMap<String, Page> pages = new HashMap<>();
 
     /**
-     *
+     * Initializes the pages, adding them in the pages HashMap
+     * Also sets the current page to the UnauthenticatedPage
      */
     public void init() {
         AuthenticatedPage authenticatedPage = new AuthenticatedPage();
@@ -56,22 +58,24 @@ public final class UI {
         SeeDetails seeDetails = new SeeDetails();
         UnauthenticatedPage unauthenticatedPage = new UnauthenticatedPage();
         Upgrades upgrades = new Upgrades();
-        this.pages.put("authenticated", authenticatedPage);
-        this.pages.put("login", login);
-        this.pages.put("logout", logout);
-        this.pages.put("movies", moviesPage);
-        this.pages.put("register", register);
-        this.pages.put("see details", seeDetails);
-        this.pages.put("unauthenticated", unauthenticatedPage);
-        this.pages.put("upgrades", upgrades);
+
+        this.pages.put(Constants.Page.AUTH, authenticatedPage);
+        this.pages.put(Constants.Page.LOGIN, login);
+        this.pages.put(Constants.Page.LOGOUT, logout);
+        this.pages.put(Constants.Page.MOVIES, moviesPage);
+        this.pages.put(Constants.Page.REGISTER, register);
+        this.pages.put(Constants.Page.DETAILS, seeDetails);
+        this.pages.put(Constants.Page.UNAUTH, unauthenticatedPage);
+        this.pages.put(Constants.Page.UPGRADES, upgrades);
 
         this.currentPage = unauthenticatedPage;
     }
 
     /**
-     *
+     * Clears the app session
+     * Initializes the pages HashMap again
      */
-    public void clearUI() {
+    public void clearApp() {
         this.currentUser = null;
         this.currentMoviesList.clear();
         this.pages.clear();
@@ -103,7 +107,8 @@ public final class UI {
     }
 
     /**
-     *
+     * When this setter is called, it makes sure to exclude any movies that are banned in the
+     * current user's country
      * @param movies
      */
     public void setCurrentMoviesList(final ArrayList<Movie> movies) {
@@ -116,9 +121,9 @@ public final class UI {
     }
 
     /**
-     *
+     * Returns a movie from the currentMoviesList
      * @param name
-     * @return
+     * @return the movie, if it is found, or null
      */
     public Movie getMovie(final String name) {
         for (Movie movie : currentMoviesList) {
@@ -130,13 +135,13 @@ public final class UI {
     }
 
     /**
-     *
-     * @param substring
+     * Sets the currentMoviesList to all movies that start with the startWith string
+     * @param startWith
      */
-    public void search(final String substring) {
+    public void search(final String startWith) {
         ArrayList<Movie> newCurrentMoviesList = new ArrayList<>();
         for (Movie movie : currentMoviesList) {
-            if (movie.getName().startsWith(substring)) {
+            if (movie.getName().startsWith(startWith)) {
                newCurrentMoviesList.add(movie);
             }
         }
@@ -144,17 +149,16 @@ public final class UI {
     }
 
     /**
-     *
+     * Sets the currentMovieList to a list that contains everything specified in the containsInput
      * @param containsInput
      */
     public void contains(final ContainsInput containsInput) {
-        if (containsInput == null) {
-            return;
-        }
-
         ArrayList<Movie> newCurrentMoviesList = new ArrayList<>();
+
         for (Movie movie : currentMoviesList) {
             boolean checkActors = true, checkGenre = true;
+
+            /* Checks if all given actors are part of the movie's cast */
             if (containsInput.getActors() != null) {
                 for (String actor : containsInput.getActors()) {
                     if (!movie.getActors().contains(actor)) {
@@ -164,6 +168,7 @@ public final class UI {
                 }
             }
 
+            /* Checks if all given genres are part of the movie's genres */
             if (containsInput.getGenre() != null) {
                 for (String genre : containsInput.getGenre()) {
                     if (!movie.getGenres().contains(genre)) {
@@ -182,7 +187,7 @@ public final class UI {
     }
 
     /**
-     *
+     * Sorts the currentMovieList, making sure it contains everything that the filter specifies
      * @param filter
      */
     public void filter(final FilterInput filter) {
@@ -193,20 +198,8 @@ public final class UI {
             }
         }
 
-        this.contains(filter.getContains());
-    }
-
-    /**
-     *
-     * @param name
-     * @return
-     */
-    public boolean check(final String name) {
-        for (Movie movie : currentMoviesList) {
-            if (movie.getName().equals(name)) {
-                return true;
-            }
+        if (filter.getContains() != null) {
+            this.contains(filter.getContains());
         }
-        return false;
     }
 }

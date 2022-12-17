@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public final class Input {
     private ArrayList<UserInput> users;
     private ArrayList<MovieInput> movies;
-    private ArrayList<ActionsInput> actions;
+    private ArrayList<ActionInput> actions;
     public Input() {
     }
 
@@ -17,7 +17,7 @@ public final class Input {
         return movies;
     }
 
-    public ArrayList<ActionsInput> getActions() {
+    public ArrayList<ActionInput> getActions() {
         return actions;
     }
 }

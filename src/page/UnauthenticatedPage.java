@@ -9,8 +9,10 @@ public final class UnauthenticatedPage extends Page implements Accepter {
     public UnauthenticatedPage() {
         this.pageFeatures = new ArrayList<>();
         this.pageConnections = new ArrayList<>();
+
         this.pageConnections.add(Constants.Page.LOGIN);
         this.pageConnections.add(Constants.Page.REGISTER);
+        this.pageConnections.add(Constants.Page.UNAUTH);
     }
 
     @Override

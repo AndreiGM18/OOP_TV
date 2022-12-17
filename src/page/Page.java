@@ -7,8 +7,7 @@ public abstract class Page implements Accepter {
     protected ArrayList<String> pageFeatures;
 
     /**
-     *
-     * @return
+     * @return the pages that can be reached from this page
      */
     public ArrayList<String> getPageConnections() {
         return pageConnections;
@@ -16,7 +15,7 @@ public abstract class Page implements Accepter {
 
     /**
      *
-     * @return
+     * @return the features that can be done on this page
      */
     public ArrayList<String> getPageFeatures() {
         return pageFeatures;

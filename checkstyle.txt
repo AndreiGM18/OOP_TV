@@ -1,8 +1,2 @@
 Starting audit...
-[ERROR] /home/student/Desktop/OOP_TV/./src/Main.java:45:5: Method length is 178 lines (max allowed is 150). [MethodLength]
-[ERROR] /home/student/Desktop/OOP_TV/./src/Main.java:188:64: '5' is a magic number. [MagicNumber]
-[ERROR] /home/student/Desktop/OOP_TV/./src/implementation/User.java:87:44: '15' is a magic number. [MagicNumber]
-[ERROR] /home/student/Desktop/OOP_TV/./src/implementation/User.java:191:28: '10' is a magic number. [MagicNumber]
-[ERROR] /home/student/Desktop/OOP_TV/./src/implementation/User.java:192:28: '10' is a magic number. [MagicNumber]
 Audit done.
-Checkstyle ends with 5 errors.

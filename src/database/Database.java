@@ -1,4 +1,4 @@
-package databases;
+package database;
 
 import fileio.CredentialsInput;
 import fileio.MovieInput;
@@ -16,8 +16,8 @@ public final class Database {
     }
 
     /**
-     *
-     * @return
+     * Singleton pattern
+     * @return instance
      */
     public static Database getDatabase() {
         if (instance == null) {
@@ -31,7 +31,7 @@ public final class Database {
     private LinkedList<Movie> movieDatabase = new LinkedList<>();
 
     /**
-     *
+     * Adds a user to the userDatabase
      * @param user
      */
     public void putUser(final User user) {
@@ -39,7 +39,7 @@ public final class Database {
     }
 
     /**
-     *
+     * Adds a movie to the movieDatabase
      * @param movie
      */
     public void putMovie(final Movie movie) {
@@ -47,9 +47,9 @@ public final class Database {
     }
 
     /**
-     *
+     * Returns a user from the database
      * @param credentialsInput
-     * @return
+     * @return the user, if found, or null
      */
     public User getUser(final CredentialsInput credentialsInput) {
         for (User user : userDatabase) {
@@ -61,18 +61,12 @@ public final class Database {
         return null;
     }
 
-    /**
-     *
-     * @param
-     * @return
-     */
-
     public LinkedList<Movie> getMovieDatabase() {
         return movieDatabase;
     }
 
     /**
-     *
+     * Clears both the user and the movie databases
      */
     public void clearDatabase() {
         userDatabase.clear();
@@ -80,9 +74,9 @@ public final class Database {
     }
 
     /**
-     *
+     * Creates a user, then it adds it to the database
      * @param credentialsInput
-     * @return
+     * @return the newly created user
      */
     public User addUser(final CredentialsInput credentialsInput) {
         User user = new User.UserBuilder(credentialsInput)
@@ -92,7 +86,8 @@ public final class Database {
         return user;
     }
     /**
-     *
+     * Creates both the user and the movie databases, by building each user and movie individually,
+     * then adding them in their respective database
      * @param userInputs
      * @param movieInputs
      */

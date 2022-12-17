@@ -2,10 +2,14 @@ package implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import constants.Constants;
 import fileio.CredentialsInput;
 
 import java.util.ArrayList;
 
+/**
+ * Class implements the Builder design pattern
+ */
 public final class User {
     private Credentials credentials;
     private int tokensCount;
@@ -84,7 +88,7 @@ public final class User {
     public static final class UserBuilder {
         private Credentials credentials;
         private int tokensCount = 0;
-        private int numFreePremiumMovies = 15;
+        private int numFreePremiumMovies = Constants.Integers.FREE_MOVIES;
         private ArrayList<Movie> purchasedMovies = new ArrayList<>();
         private ArrayList<Movie> watchedMovies = new ArrayList<>();
         private ArrayList<Movie> likedMovies = new ArrayList<>();
@@ -95,9 +99,8 @@ public final class User {
         }
 
         /**
-         *
-         * @param tokensCountGiven
-         * @return
+         * @param tokensCountGiven the number of tokens the user has
+         * @return the changed Builder instance
          */
         public UserBuilder tokensCount(final int tokensCountGiven) {
             this.tokensCount = tokensCountGiven;
@@ -106,8 +109,9 @@ public final class User {
 
         /**
          *
-         * @param numFreePremiumMoviesGiven
-         * @return
+         * @param numFreePremiumMoviesGiven the number of free movies left (can be decreased only
+         *                                  if the account is premium)
+         * @return the changed Builder instance
          */
         public UserBuilder numFreePremiumMovies(final int numFreePremiumMoviesGiven) {
             this.numFreePremiumMovies = numFreePremiumMoviesGiven;
@@ -115,9 +119,8 @@ public final class User {
         }
 
         /**
-         *
-         * @param purchasedMoviesGiven
-         * @return
+         * @param purchasedMoviesGiven the purchased movies list
+         * @return the changed Builder instance
          */
         public UserBuilder purchasedMovies(final ArrayList<Movie> purchasedMoviesGiven) {
             this.purchasedMovies = purchasedMoviesGiven;
@@ -125,9 +128,8 @@ public final class User {
         }
 
         /**
-         *
-         * @param watchedMoviesGiven
-         * @return
+         * @param watchedMoviesGiven the watched movies list
+         * @return the changed Builder instance
          */
         public UserBuilder watchedMovies(final ArrayList<Movie> watchedMoviesGiven) {
             this.watchedMovies = watchedMoviesGiven;
@@ -135,9 +137,8 @@ public final class User {
         }
 
         /**
-         *
-         * @param likedMoviesGiven
-         * @return
+         * @param likedMoviesGiven the liked movies list
+         * @return the changed Builder instance
          */
         public UserBuilder likedMovies(final ArrayList<Movie> likedMoviesGiven) {
             this.likedMovies = likedMoviesGiven;
@@ -145,9 +146,8 @@ public final class User {
         }
 
         /**
-         *
-         * @param ratedMoviesGiven
-         * @return
+         * @param ratedMoviesGiven the rated movies list
+         * @return the changed Builder instance
          */
         public UserBuilder ratedMovies(final ArrayList<Movie> ratedMoviesGiven) {
             this.ratedMovies = ratedMoviesGiven;
@@ -155,8 +155,7 @@ public final class User {
         }
 
         /**
-         *
-         * @return
+         * @return a User based on everything specified to the Builder
          */
         public User build() {
             return new User(this);
@@ -164,9 +163,9 @@ public final class User {
     }
 
     /**
-     *
+     * Adds a specified number of tokens, decreasing the user's balance
      * @param count
-     * @return
+     * @return true, if successful, or false, otherwise
      */
     public boolean buyTokens(final String count) {
         int cnt = Integer.parseInt(count);
@@ -184,13 +183,14 @@ public final class User {
     }
 
     /**
-     *
-     * @return
+     * Turns a standard account into a premium account, decreasing the user's number of tokens
+     * @return true, if successful, or false, otherwise
      */
     public boolean buyPremium() {
-        if (tokensCount >= 10 && credentials.getAccountType().equals("standard")) {
-            tokensCount -= 10;
-            credentials.setAccountType("premium");
+        if (tokensCount >= Constants.Integers.PREMIUM_ACC_PRICE
+                && credentials.getAccountType().equals(Constants.User.Credentials.STANDARD)) {
+            tokensCount -= Constants.Integers.PREMIUM_ACC_PRICE;
+            credentials.setAccountType(Constants.User.Credentials.PREMIUM);
             return true;
         } else {
             return false;
@@ -198,54 +198,59 @@ public final class User {
     }
 
     /**
-     *
-     * @return
-     */
-    public ObjectNode createObjectNode() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode objectNode = objectMapper.createObjectNode();
-
-        ObjectNode credentialsNode = objectMapper.createObjectNode();
-        credentialsNode.put("name", credentials.getName());
-        credentialsNode.put("password", credentials.getPassword());
-        credentialsNode.put("accountType", credentials.getAccountType());
-        credentialsNode.put("country", credentials.getCountry());
-        credentialsNode.put("balance", credentials.getBalance());
-        objectNode.set("credentials", credentialsNode);
-        objectNode.put("tokensCount", tokensCount);
-        objectNode.put("numFreePremiumMovies", numFreePremiumMovies);
-        objectNode.put("purchasedMovies", Movie.createMoviesArrayNode(purchasedMovies));
-        objectNode.put("watchedMovies", Movie.createMoviesArrayNode(watchedMovies));
-        objectNode.put("likedMovies", Movie.createMoviesArrayNode(likedMovies));
-        objectNode.put("ratedMovies", Movie.createMoviesArrayNode(ratedMovies));
-
-        return objectNode;
-    }
-
-    /**
-     *
+     * Adds a movie to the purchasedMovieList, decreasing the user's number of tokens or their
+     * number of free movies (based on the account's type)
      * @param movie
-     * @return
+     * @return true, if successful, or false, otherwise
      */
     public boolean purchase(final Movie movie) {
-        if (credentials.getAccountType().equals("standard") && tokensCount >= 2) {
-            tokensCount -= 2;
+        /* Standard users have to spend tokens */
+        if (credentials.getAccountType().equals(Constants.User.Credentials.STANDARD)
+                && tokensCount >= Constants.Integers.MOVIE_PRICE) {
+            tokensCount -= Constants.Integers.MOVIE_PRICE;
             purchasedMovies.add(movie);
             return true;
         }
 
-        if (credentials.getAccountType().equals("premium")) {
-            if (numFreePremiumMovies >= 1) {
-                numFreePremiumMovies -= 1;
+        /* Premium users can also use up their free movies, before spending tokens */
+        if (credentials.getAccountType().equals(Constants.User.Credentials.PREMIUM)) {
+            if (numFreePremiumMovies > 0) {
+                --numFreePremiumMovies;
                 purchasedMovies.add(movie);
                 return true;
-            } else if (tokensCount >= 2) {
-                tokensCount -= 2;
+            } else if (tokensCount >= Constants.Integers.MOVIE_PRICE) {
+                tokensCount -= Constants.Integers.MOVIE_PRICE;
                 purchasedMovies.add(movie);
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Creates an ObjectNode based on the user's fields
+     * @return ObjectNode
+     */
+    public ObjectNode createObjectNode() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode objectNode = objectMapper.createObjectNode();
+
+        ObjectNode credentialsNode = objectMapper.createObjectNode();
+        credentialsNode.put(Constants.User.Credentials.NAME, credentials.getName());
+        credentialsNode.put(Constants.User.Credentials.PASSWORD, credentials.getPassword());
+        credentialsNode.put(Constants.User.Credentials.ACC_TYPE, credentials.getAccountType());
+        credentialsNode.put(Constants.User.Credentials.COUNTRY, credentials.getCountry());
+        credentialsNode.put(Constants.User.Credentials.BALANCE, credentials.getBalance());
+
+        objectNode.set(Constants.User.CREDENTIALS, credentialsNode);
+        objectNode.put(Constants.User.TOKENS_CNT, tokensCount);
+        objectNode.put(Constants.User.FREE_MOVIES, numFreePremiumMovies);
+        objectNode.put(Constants.User.PURCHASED, Movie.createMoviesArrayNode(purchasedMovies));
+        objectNode.put(Constants.User.WATCHED, Movie.createMoviesArrayNode(watchedMovies));
+        objectNode.put(Constants.User.LIKED, Movie.createMoviesArrayNode(likedMovies));
+        objectNode.put(Constants.User.RATED, Movie.createMoviesArrayNode(ratedMovies));
+
+        return objectNode;
     }
 }
